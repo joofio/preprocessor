@@ -2,24 +2,21 @@ import requests
 import medspacy
 from medspacy.ner import TargetRule
 from bs4 import BeautifulSoup
+from spacy.tokens import Span
+# import diabetes
+import pregnancy
+import hiv
 
 def setup_medspacy():
     nlp = medspacy.load()
 
-    target_rules = [
-        TargetRule("Biktarvy", "DRUG"),
-        TargetRule("bictegravir", "INGREDIENT"),
-        TargetRule("Emtricitabine", "INGREDIENT"),
-        TargetRule("Tenofovir alafenamide", "INGREDIENT"),
-        TargetRule("Rifampicin", "INGREDIENT"),
-        TargetRule("St. John’s wort", "DRUG"),
-        TargetRule("Hypericum perforatum", "INGREDIENT"),
-        TargetRule("Pregnancy", "CONDITION"),
-        TargetRule("Breast-feeding", "CONDITION"),
-        TargetRule("HIV", "CONDITION"),
-    ]
+    Span.set_extension("code", default=None, force=False)
+    Span.set_extension("system", default="SNOMED-CT", force=False)
+    
+    # nlp.get_pipe("medspacy_target_matcher").add(diabetes.diabetes_rules)
+    nlp.get_pipe("medspacy_target_matcher").add(pregnancy.pregnancy_rules)
+    nlp.get_pipe("medspacy_target_matcher").add(hiv.hiv_rules)
 
-    nlp.get_pipe("medspacy_target_matcher").add(target_rules)
     return nlp
 
 def preprocess(htmlDOM: BeautifulSoup, nlp):
@@ -28,16 +25,18 @@ def preprocess(htmlDOM: BeautifulSoup, nlp):
     for textNode in textNodes:
         text = textNode + ""
         doc = nlp(text)
-        if not doc.ents:
-            print("No entities found")
-            continue
-        else:
+        if doc.ents:
             parent = textNode.parent
             for ent in doc.ents:
-                if parent.has_attr('class'):
-                    parent['class'] = parent['class'] + [ent.label_]
+                if ent._.code:
+                    classCode = ent._.code
                 else:
-                    parent['class'] = [ent.label_]
+                    classCode = ent.text
+                if parent.has_attr('class'):
+                    if classCode not in parent['class']:
+                        parent['class'] = parent['class'] + [classCode]
+                else:
+                    parent['class'] = [classCode]
     
     print(htmlDOM.prettify())
 
