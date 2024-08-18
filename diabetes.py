@@ -1,9 +1,5 @@
 from medspacy.ner import TargetRule
 
-# Add custom code attributes to the Span class
-
-
-
 # Define the rules for the diabetes NER component
 diabetes_rules = [
     # Literal matching for common terms
