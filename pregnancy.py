@@ -9,33 +9,23 @@ pregnancy_rules = [
     TargetRule(literal="prenatal", category="PREGNANCY", attributes={"code": "118189007"}),
     
     # Phrases indicating pregnancy-related information
-    TargetRule(literal="", pattern=[{"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY"),
-    TargetRule(literal="", pattern=[{"LOWER": "if"}, {"LOWER": "you"}, {"LOWER": "are"}, {"LOWER": "pregnant"}], category="PREGNANCY"),
-    TargetRule(literal="", pattern=[{"LOWER": "when"}, {"LOWER": "pregnant"}], category="PREGNANCY"),
-    TargetRule(literal="", pattern=[{"LOWER": "while"}, {"LOWER": "pregnant"}], category="PREGNANCY"),
-    TargetRule(literal="", pattern=[{"LOWER": "planning"}, {"LOWER": "to"}, {"LOWER": "become"}, {"LOWER": "pregnant"}], category="PREGNANCY"),
-    
-    # Pregnancy-related conditions
-    TargetRule(literal="gestational diabetes", category="PREGNANCY_CONDITION"),
-    TargetRule(literal="pre-eclampsia", category="PREGNANCY_CONDITION"),
-    TargetRule(literal="eclampsia", category="PREGNANCY_CONDITION"),
-    TargetRule(literal="hyperemesis gravidarum", category="PREGNANCY_CONDITION"),
-    TargetRule(literal="morning sickness", category="PREGNANCY_CONDITION"),
+    TargetRule(literal="during pregnancy", pattern=[{"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY", attributes={"code": "77386006"}),
+    TargetRule(literal="if you are pregnant", pattern=[{"LOWER": "if"}, {"LOWER": "you"}, {"LOWER": "are"}, {"LOWER": "pregnant"}], category="PREGNANCY", attributes={"code": "77386006"}),
+    TargetRule(literal="when pregnant", pattern=[{"LOWER": "when"}, {"LOWER": "pregnant"}], category="PREGNANCY", attributes={"code": "77386006"}),
+    TargetRule(literal="while pregnant", pattern=[{"LOWER": "while"}, {"LOWER": "pregnant"}], category="PREGNANCY", attributes={"code": "77386006"}),
+    TargetRule(literal="planning to became pregnant", pattern=[{"LOWER": "planning"}, {"LOWER": "to"}, {"LOWER": "become"}, {"LOWER": "pregnant"}], category="PREGNANCY", attributes={"code": "77386006"}),
     
     # Medications and warnings specific to pregnancy
     TargetRule(literal="contraindicated in pregnancy", pattern=[{"LOWER": "contraindicated"}, {"LOWER": "in"}, {"LOWER": "pregnancy"}], category="PREGNANCY_WARNING", attributes={"code": "77386006"}),
-    TargetRule(literal="", pattern=[{"LOWER": "not"}, {"LOWER": "recommended"}, {"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY_WARNING", attributes={"code": "77386006"}),
-    TargetRule(literal="", pattern=[{"LOWER": "use"}, {"LOWER": "with"}, {"LOWER": "caution"}, {"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY_WARNING", attributes={"code": "77386006"}),
-    TargetRule(literal="", pattern=[{"LOWER": "pregnancy"}, {"LOWER": "category"}, {"LOWER": {"IN": ["a", "b", "c", "d", "x"]}}], category="PREGNANCY_WARNING"),
+    TargetRule(literal="not recommended during pregnancy", pattern=[{"LOWER": "not"}, {"LOWER": "recommended"}, {"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY_WARNING", attributes={"code": "77386006"}),
+    TargetRule(literal="use with caution during pregnancy", pattern=[{"LOWER": "use"}, {"LOWER": "with"}, {"LOWER": "caution"}, {"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY_WARNING", attributes={"code": "77386006"}),
     
     # Effects on the fetus or baby
-    TargetRule(literal="risk of birth defects", pattern=[{"LOWER": "risk"}, {"LOWER": "of"}, {"LOWER": "birth"}, {"LOWER": "defects"}], category="PREGNANCY_RISK"),
-    TargetRule(literal="", pattern=[{"LOWER": "may"}, {"LOWER": "harm"}, {"LOWER": "the"}, {"LOWER": "unborn"}, {"LOWER": "baby"}], category="PREGNANCY_RISK"),
-    TargetRule(literal="", pattern=[{"LOWER": "fetal"}, {"LOWER": "toxicity"}], category="PREGNANCY_RISK"),
-    TargetRule(literal="", pattern=[{"LOWER": "teratogenic"}, {"LOWER": "effects"}], category="PREGNANCY_RISK"),
-    TargetRule(literal="", pattern=[{"LOWER": "can"}, {"LOWER": "cause"}, {"LOWER": "birth"}, {"LOWER": "defects"}], category="PREGNANCY_RISK"),
+    TargetRule(literal="risk of birth defects", pattern=[{"LOWER": "risk"}, {"LOWER": "of"}, {"LOWER": "birth"}, {"LOWER": "defects"}], category="PREGNANCY_RISK", attributes={"code": "LP192135-4", "system": "LOINC"}),
+    TargetRule(literal="may harm the unborn baby", pattern=[{"LOWER": "may"}, {"LOWER": "harm"}, {"LOWER": "the"}, {"LOWER": "unborn"}, {"LOWER": "baby"}], category="PREGNANCY_RISK", attributes={"code": "LP192135-4", "system": "LOINC"}),
+    TargetRule(literal="can cause birth defects", pattern=[{"LOWER": "can"}, {"LOWER": "cause"}, {"LOWER": "birth"}, {"LOWER": "defects"}], category="PREGNANCY_RISK", attributes={"code": "LP192135-4", "system": "LOINC"}),
     
     # Safe use during pregnancy
-    TargetRule(literal="", pattern=[{"LOWER": "safe"}, {"LOWER": "for"}, {"LOWER": "use"}, {"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY_SAFETY"),
-    TargetRule(literal="", pattern=[{"LOWER": "no"}, {"LOWER": "known"}, {"LOWER": "risk"}, {"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY_SAFETY"),
+    TargetRule(literal="safe for use during pregnancy", pattern=[{"LOWER": "safe"}, {"LOWER": "for"}, {"LOWER": "use"}, {"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY_SAFETY", attributes={"code": "77386006"}),
+    TargetRule(literal="no known risk during pregnancy", pattern=[{"LOWER": "no"}, {"LOWER": "known"}, {"LOWER": "risk"}, {"LOWER": "during"}, {"LOWER": "pregnancy"}], category="PREGNANCY_SAFETY",  attributes={"code": "77386006"}),
 ]
