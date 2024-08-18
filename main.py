@@ -10,8 +10,8 @@ import hiv
 def setup_medspacy():
     nlp = medspacy.load()
 
-    Span.set_extension("code", default=None, force=False)
-    Span.set_extension("system", default="SNOMED-CT", force=False)
+    Span.set_extension("code", default=None, force=True)
+    Span.set_extension("system", default="SNOMED-CT", force=True)
     
     # nlp.get_pipe("medspacy_target_matcher").add(diabetes.diabetes_rules)
     nlp.get_pipe("medspacy_target_matcher").add(pregnancy.pregnancy_rules)
