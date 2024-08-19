@@ -117,7 +117,13 @@ side_effect_rules = [
     TargetRule(
         literal="heartburn",
         category="SIDE_EFFECT",
-        pattern=[{"LOWER": {"IN": ["heartburn", "acid reflux", "indigestion", "dyspepsia"]}}],
+        pattern=[{"LOWER": {"IN": ["heartburn", "indigestion", "dyspepsia"]}}],
+        attributes={"code": "698065002"}
+    ),
+
+    TargetRule(
+        literal="acid reflux",
+        category="SIDE_EFFECT",
         attributes={"code": "698065002"}
     ),
 
@@ -133,7 +139,7 @@ side_effect_rules = [
     TargetRule(
         literal="abdominal pain",
         category="SIDE_EFFECT",
-        pattern=[{"LOWER": {"IN": ["abdominal pain", "stomach pain", "belly pain"]}}],
+        pattern=[{"LOWER": {"IN": ["abdominal", "stomach", "belly"]}, "LOWER": {"IN": ["pain", "ache", "discomfort"]}}],
         attributes={"code": "21522001"}
     ),
 ]
