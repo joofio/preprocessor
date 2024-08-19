@@ -1,3 +1,4 @@
+import json
 import requests
 import medspacy
 from medspacy.ner import TargetRule
@@ -8,6 +9,10 @@ import pregnancy
 import hiv
 import diabetes
 import side_effects
+from pydantic import BaseModel
+
+class DOMResponse(BaseModel):
+    htmlString: str
 
 def setup_medspacy():
     nlp = medspacy.load()
@@ -42,7 +47,7 @@ def preprocess(htmlDOM: BeautifulSoup, nlp):
                 else:
                     parent['class'] = [classCode]
     
-    print(htmlDOM.prettify())
+    return htmlDOM
 
 response = requests.get('https://gravitate-health.lst.tfo.upm.es/epi/api/fhir/Bundle/bundlepackageleaflet-en-94a96e39cfdcd8b378d12dd4063065f9')
 
@@ -53,9 +58,12 @@ sections = epi['entry'][0]['resource']['section'][0]['section']
 preprocessor = setup_medspacy()
 
 for section in sections:
-    print(section['title'])
-    print(section['text']['div'])
-
     htmlDOM = BeautifulSoup(section['text']['div'], 'html.parser')
 
-    preprocess(htmlDOM, preprocessor)
+    htmlDOM = preprocess(htmlDOM, preprocessor)
+    strDOM = str(htmlDOM)
+    section['text']['div'] = strDOM
+
+epi['entry'][0]['resource']['section'][0]['section'] = sections
+
+print(json.dumps(epi, indent=4))
