@@ -1,14 +1,14 @@
 import json
 import requests
 import medspacy
-from medspacy.ner import TargetRule
 from bs4 import BeautifulSoup
 from spacy.tokens import Span
+from pydantic import BaseModel
+
 import rules.pregnancy as pregnancy
 import rules.hiv as hiv
 import rules.diabetes as diabetes
 import rules.side_effects as side_effects
-from pydantic import BaseModel
 
 class DOMResponse(BaseModel):
     htmlString: str
@@ -47,21 +47,31 @@ def preprocess(htmlDOM: BeautifulSoup, nlp):
     
     return htmlDOM
 
-response = requests.get('https://gravitate-health.lst.tfo.upm.es/epi/api/fhir/Bundle/bundlepackageleaflet-en-94a96e39cfdcd8b378d12dd4063065f9')
+def change_epi_status(epi):
+    if epi['entry'][0]['resource']['category'][0]['coding'][0]['code'] != "P":
+        epi['entry'][0]['resource']['category'][0]['coding'][0]['code'] = 'P'
+        epi['entry'][0]['resource']['category'][0]['coding'][0]['display'] = 'Preprocessed'
 
-epi = response.json()
+def main():
+    response = requests.get('https://gravitate-health.lst.tfo.upm.es/epi/api/fhir/Bundle/bundlepackageleaflet-en-94a96e39cfdcd8b378d12dd4063065f9')
+    preprocessor = setup_medspacy()
+    epi = response.json()
+    change_epi_status(epi)
 
-sections = epi['entry'][0]['resource']['section'][0]['section']
+    sections = epi['entry'][0]['resource']['section'][0]['section']
 
-preprocessor = setup_medspacy()
+    for section in sections:
+        htmlDOM = BeautifulSoup(section['text']['div'], 'html.parser')
 
-for section in sections:
-    htmlDOM = BeautifulSoup(section['text']['div'], 'html.parser')
+        htmlDOM = preprocess(htmlDOM, preprocessor)
+        strDOM = str(htmlDOM)
+        section['text']['div'] = strDOM
 
-    htmlDOM = preprocess(htmlDOM, preprocessor)
-    strDOM = str(htmlDOM)
-    section['text']['div'] = strDOM
+    epi['entry'][0]['resource']['section'][0]['section'] = sections
 
-epi['entry'][0]['resource']['section'][0]['section'] = sections
+    with open('output.json', 'w') as f:
+        json.dump(epi, f)
 
-print(json.dumps(epi, indent=4))
+
+if __name__ == "__main__":
+    main()
