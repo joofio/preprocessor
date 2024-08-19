@@ -6,6 +6,8 @@ from spacy.tokens import Span
 # import diabetes
 import pregnancy
 import hiv
+import diabetes
+import side_effects
 
 def setup_medspacy():
     nlp = medspacy.load()
@@ -16,6 +18,8 @@ def setup_medspacy():
     # nlp.get_pipe("medspacy_target_matcher").add(diabetes.diabetes_rules)
     nlp.get_pipe("medspacy_target_matcher").add(pregnancy.pregnancy_rules)
     nlp.get_pipe("medspacy_target_matcher").add(hiv.hiv_rules)
+    nlp.get_pipe("medspacy_target_matcher").add(diabetes.diabetes_rules)
+    nlp.get_pipe("medspacy_target_matcher").add(side_effects.side_effect_rules)
 
     return nlp
 
