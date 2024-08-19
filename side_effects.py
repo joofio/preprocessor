@@ -120,4 +120,20 @@ side_effect_rules = [
         pattern=[{"LOWER": {"IN": ["heartburn", "acid reflux", "indigestion", "dyspepsia"]}}],
         attributes={"code": "698065002"}
     ),
+
+    # Vomiting
+    TargetRule(
+        literal="vomiting",
+        category="SIDE_EFFECT",
+        pattern=[{"LOWER": {"IN": ["vomiting", "emesis"]}}],
+        attributes={"code": "422400008"}
+    ),
+
+    # Abdominal Pain
+    TargetRule(
+        literal="abdominal pain",
+        category="SIDE_EFFECT",
+        pattern=[{"LOWER": {"IN": ["abdominal pain", "stomach pain", "belly pain"]}}],
+        attributes={"code": "21522001"}
+    ),
 ]
