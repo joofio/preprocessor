@@ -4,11 +4,10 @@ import medspacy
 from medspacy.ner import TargetRule
 from bs4 import BeautifulSoup
 from spacy.tokens import Span
-# import diabetes
-import pregnancy
-import hiv
-import diabetes
-import side_effects
+import rules.pregnancy as pregnancy
+import rules.hiv as hiv
+import rules.diabetes as diabetes
+import rules.side_effects as side_effects
 from pydantic import BaseModel
 
 class DOMResponse(BaseModel):
@@ -20,7 +19,6 @@ def setup_medspacy():
     Span.set_extension("code", default=None, force=True)
     Span.set_extension("system", default="SNOMED-CT", force=True)
     
-    # nlp.get_pipe("medspacy_target_matcher").add(diabetes.diabetes_rules)
     nlp.get_pipe("medspacy_target_matcher").add(pregnancy.pregnancy_rules)
     nlp.get_pipe("medspacy_target_matcher").add(hiv.hiv_rules)
     nlp.get_pipe("medspacy_target_matcher").add(diabetes.diabetes_rules)
