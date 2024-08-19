@@ -16,13 +16,13 @@ class DOMResponse(BaseModel):
 def setup_medspacy():
     nlp = medspacy.load()
 
-    Span.set_extension("code", default=None, force=True)
-    Span.set_extension("system", default="SNOMED-CT", force=True)
+    Span.set_extension('code', default=None, force=True)
+    Span.set_extension('system', default='SNOMED-CT', force=True)
     
-    nlp.get_pipe("medspacy_target_matcher").add(pregnancy.pregnancy_rules)
-    nlp.get_pipe("medspacy_target_matcher").add(hiv.hiv_rules)
-    nlp.get_pipe("medspacy_target_matcher").add(diabetes.diabetes_rules)
-    nlp.get_pipe("medspacy_target_matcher").add(side_effects.side_effect_rules)
+    nlp.get_pipe('medspacy_target_matcher').add(pregnancy.pregnancy_rules)
+    nlp.get_pipe('medspacy_target_matcher').add(hiv.hiv_rules)
+    nlp.get_pipe('medspacy_target_matcher').add(diabetes.diabetes_rules)
+    nlp.get_pipe('medspacy_target_matcher').add(side_effects.side_effect_rules)
 
     return nlp
 
@@ -48,7 +48,7 @@ def preprocess(htmlDOM: BeautifulSoup, nlp):
     return htmlDOM
 
 def change_epi_status(epi):
-    if epi['entry'][0]['resource']['category'][0]['coding'][0]['code'] != "P":
+    if epi['entry'][0]['resource']['category'][0]['coding'][0]['code'] != 'P':
         epi['entry'][0]['resource']['category'][0]['coding'][0]['code'] = 'P'
         epi['entry'][0]['resource']['category'][0]['coding'][0]['display'] = 'Preprocessed'
 
