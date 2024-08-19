@@ -3,22 +3,16 @@ import requests
 import medspacy
 from bs4 import BeautifulSoup
 from spacy.tokens import Span
-from pydantic import BaseModel
 
-import rules.pregnancy as pregnancy
-import rules.hiv as hiv
-import rules.diabetes as diabetes
-import rules.side_effects as side_effects
-
-class DOMResponse(BaseModel):
-    htmlString: str
+from rules import pregnancy, hiv, diabetes, side_effects
 
 def setup_medspacy():
+    """Set up the medSpaCy pipeline"""
     nlp = medspacy.load()
 
     Span.set_extension('code', default=None, force=True)
     Span.set_extension('system', default='SNOMED-CT', force=True)
-    
+
     nlp.get_pipe('medspacy_target_matcher').add(pregnancy.pregnancy_rules)
     nlp.get_pipe('medspacy_target_matcher').add(hiv.hiv_rules)
     nlp.get_pipe('medspacy_target_matcher').add(diabetes.diabetes_rules)
@@ -26,34 +20,36 @@ def setup_medspacy():
 
     return nlp
 
-def preprocess(htmlDOM: BeautifulSoup, nlp):
-    textNodes = htmlDOM.findAll(text=True)
+def preprocess(html_dom: BeautifulSoup, nlp):
+    """Preprocess the HTML DOM"""
+    text_nodes = html_dom.findAll(text=True)
 
-    for textNode in textNodes:
-        text = textNode + ""
+    for text_node in text_nodes:
+        text = text_node + ""
         doc = nlp(text)
         if doc.ents:
-            parent = textNode.parent
+            parent = text_node.parent
             for ent in doc.ents:
                 if ent._.code:
-                    classCode = ent._.code
+                    class_code = ent._.code
                 else:
-                    classCode = ent.text
+                    class_code = ent.text
                 if parent.has_attr('class'):
-                    if classCode not in parent['class']:
-                        parent['class'] = parent['class'] + [classCode]
+                    if class_code not in parent['class']:
+                        parent['class'] = parent['class'] + [class_code]
                 else:
-                    parent['class'] = [classCode]
-    
-    return htmlDOM
+                    parent['class'] = [class_code]
+    return html_dom
 
 def change_epi_status(epi):
+    """Change the status of the EPI to Preprocessed"""	
     if epi['entry'][0]['resource']['category'][0]['coding'][0]['code'] != 'P':
         epi['entry'][0]['resource']['category'][0]['coding'][0]['code'] = 'P'
         epi['entry'][0]['resource']['category'][0]['coding'][0]['display'] = 'Preprocessed'
 
 def main():
-    response = requests.get('https://gravitate-health.lst.tfo.upm.es/epi/api/fhir/Bundle/bundlepackageleaflet-en-94a96e39cfdcd8b378d12dd4063065f9')
+    """Main function"""	
+    response = requests.get('https://gravitate-health.lst.tfo.upm.es/epi/api/fhir/Bundle/bundlepackageleaflet-en-94a96e39cfdcd8b378d12dd4063065f9', timeout=15)
     preprocessor = setup_medspacy()
     epi = response.json()
     change_epi_status(epi)
@@ -61,15 +57,15 @@ def main():
     sections = epi['entry'][0]['resource']['section'][0]['section']
 
     for section in sections:
-        htmlDOM = BeautifulSoup(section['text']['div'], 'html.parser')
+        html_dom = BeautifulSoup(section['text']['div'], 'html.parser')
 
-        htmlDOM = preprocess(htmlDOM, preprocessor)
-        strDOM = str(htmlDOM)
-        section['text']['div'] = strDOM
+        html_dom = preprocess(html_dom, preprocessor)
+        str_dom = str(html_dom)
+        section['text']['div'] = str_dom
 
     epi['entry'][0]['resource']['section'][0]['section'] = sections
 
-    with open('output.json', 'w') as f:
+    with open('output.json', 'w', encoding='utf-8') as f:
         json.dump(epi, f)
 
 

@@ -13,6 +13,7 @@ requests = "^2.32.3"
 medspacy = "^1.2.0"
 beautifulsoup4 = "^4.12.3"
 fastapi = "^0.112.1"
+pylint = "^3.2.6"
 
 
 [tool.poetry.group.dev.dependencies]
