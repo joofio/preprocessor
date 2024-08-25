@@ -3,9 +3,12 @@ import requests
 import medspacy
 from bs4 import BeautifulSoup
 from spacy.tokens import Span
+from fastapi import FastAPI, Request
 
 from rules import pregnancy, hiv, diabetes, side_effects
 from snomed_code_lookup import SnomedCodeLookup
+
+app = FastAPI()
 
 def setup_medspacy():
     """Set up the medSpaCy pipeline"""
@@ -84,11 +87,9 @@ def from_codes_to_extensions(code, value):
         ]
     }
 
-def main():
+def main(epi):
     """Main function"""	
-    response = requests.get('https://gravitate-health.lst.tfo.upm.es/epi/api/fhir/Bundle/bundlepackageleaflet-en-94a96e39cfdcd8b378d12dd4063065f9', timeout=15)
     preprocessor = setup_medspacy()
-    epi = response.json()
     codes_found = {}
 
     change_epi_status(epi)
@@ -115,9 +116,13 @@ def main():
 
     epi['entry'][0]['resource']['extension'] = extensions
 
-    with open('output.json', 'w', encoding='utf-8') as f:
-        json.dump(epi, f)
+    return epi
 
 
-if __name__ == "__main__":
-    main()
+@app.post("/preprocess")
+async def process(request: Request):
+    """Process the EPI"""
+    epi = await request.json()
+    preprocessed_epi = main(epi)
+
+    return preprocessed_epi
